@@ -184,3 +184,13 @@ $ git add .
 $ git commit -m "Initial"
 ```
 
+> ![Github new repo](docs/images/github-new-repo.png)
+
+Once the repository is created:
+
+```bash
+$ git remote add origin https://github.com/davidainslie/multi-docker.git
+$ git push -u origin master
+```
+
+Next we need a link between Github and Travis CI.

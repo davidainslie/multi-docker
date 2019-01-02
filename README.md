@@ -194,3 +194,13 @@ $ git push -u origin master
 ```
 
 Next we need a link between Github and Travis CI.
+
+> ![Travis plan](docs/images/travis-plan.png)
+
+As part of the [.travis.yml](.travis.yml) we need environment variables in [travis](https://travis-ci.com) for [docker hub](https://hub.docker.com) credentials.
+
+> ![Travis env](docs/images/travis-env.png)
+
+and we add our docker hub credentials:
+
+> ![Travis dockerhub credentials](docs/images/travis-docker-credentials.png)

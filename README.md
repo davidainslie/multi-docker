@@ -204,3 +204,15 @@ As part of the [.travis.yml](.travis.yml) we need environment variables in [trav
 and we add our docker hub credentials:
 
 > ![Travis dockerhub credentials](docs/images/travis-docker-credentials.png)
+
+So we have a CI that pulls the repository from Github, builds some images and pushes them to Docker Hub. How do we deploy onto AWS?
+
+> ![Multiple containers for AWS](docs/images/multi-containers-for-aws.png)
+
+Elastic Beanstalk can handle one Dockerfile, it will automatically build and run. But when multiple Dockerfiles are involved, EB can't just randomly select one!
+
+Let's create some instruction for EB with [Dockerrun.aws.json](Dockerrun.aws.json). The idea is similar to a **docker-compose.yml**, with slightly different jargon, e.g. instead of **Services** our new file will describe **Container Definitions**.
+
+> ![AWS EB tasks](docs/images/aws-eb-tasks.png)
+
+Take a look at [Amazon ECS Task Definitions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html). What we write in **Dockerrun.aws.json** is defined under [Container Definitions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#container_definitions).

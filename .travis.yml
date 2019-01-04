@@ -11,15 +11,15 @@ script:
 
 after_success:
   - docker build -t davidainslie/multi-client ./client
-  - docker build -t davidainslie/multi-nginx ./nginx
-  - docker build -t davidainslie/multi-api ./api
-  - docker build -t davidainslie/multi-worker ./worker
+  # - docker build -t davidainslie/multi-nginx ./nginx
+  # - docker build -t davidainslie/multi-api ./api
+  # - docker build -t davidainslie/multi-worker ./worker
 
   # Log into docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
 
   # Take these images and push them to dockerhub
   - docker push davidainslie/multi-client
-  - docker push davidainslie/multi-nginx
-  - docker push davidainslie/multi-api
-  - docker push davidainslie/multi-worker
+  # - docker push davidainslie/multi-nginx
+  # - docker push davidainslie/multi-api
+  # - docker push davidainslie/multi-worker

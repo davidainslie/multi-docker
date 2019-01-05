@@ -379,3 +379,14 @@ Finally we can add **deploy** to [.travis.yml](.travis.yml). Note, we'll need to
 
 > ![Bucket](docs/images/s3-bucket.png)
 
+## Test Deployment
+
+If there are any errors, check out the logs:
+
+> ![Check logs](docs/images/check-logs.png)
+
+> ![Logs](docs/images/logs.png)
+
+To view our application click the generated link:
+
+> ![Click link](docs/images/click-link.png)

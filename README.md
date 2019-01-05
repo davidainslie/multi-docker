@@ -216,3 +216,166 @@ Let's create some instruction for EB with [Dockerrun.aws.json](Dockerrun.aws.jso
 > ![AWS EB tasks](docs/images/aws-eb-tasks.png)
 
 Take a look at [Amazon ECS Task Definitions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html). What we write in **Dockerrun.aws.json** is defined under [Container Definitions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#container_definitions).
+
+With this new file we have to set up our environment on AWS:
+
+> ![Elastic beanstalk](docs/images/eb.png)
+
+> ![Create environment](docs/images/eb-create-environment.png)
+
+> ![Environment tier](docs/images/environment-tier.png)
+
+> ![Create environment](docs/images/create-environment.png)
+
+> ![AWS EB](docs/images/aws-eb.png)
+
+> ![AWS elastic cache](docs/images/aws-elastic-cache.png)
+
+> ![AWS RDS](docs/images/aws-rds.png)
+
+## AWS Sidetrack Regarding Required Services
+
+> ![AWS Default](docs/images/aws-default.png)
+
+> ![AWS VPC](docs/images/aws-vpc.png)
+
+> ![AWS VPC search](docs/images/vpc-search.png)
+
+> ![VPC](docs/images/vpc.png)
+
+To have our services in Elastic Beanstalk talk to "other" services such as the managed Redis, we need a **security group** (a fancy name for **firewall rules**):
+
+> ![Security group](docs/images/security-group.png)
+
+Anything can connect to services on our EB instance via port 80.
+
+And we can set up our own rules e.g. "allow traffic on port 3010 from IP 172.0.40.2".
+
+To look up the security group...
+
+> ![Navigate security group](docs/images/navigate-security-group.png)
+
+> ![View security group](docs/images/view-security-group.png)
+
+And so how do we allow our EB to communicate with Redis and Postgres? We add a firewall rule:
+
+**Allow any traffic from any other AWS service that has this security group**.
+
+> ![New firewall rule](docs/images/new-firewall-rule.png)
+
+So let's create postgres, redis and a security group to be applied to all the above so that they can communicate.
+
+## RDS
+
+> ![Navigate to RDS](docs/images/navigate-rds.png)
+
+> ![Start create database](docs/images/start-create-database.png)
+
+> ![Creating Postgres](docs/images/creating-postgres.png)
+
+> ![Postgres settings](docs/images/postgres-settings.png)
+
+> ![Database options](docs/images/database-options.png)
+
+## ElastiCache
+
+> ![Navigate Elasticache](docs/images/navigate-elasticache.png)
+
+> ![Choose Redis](docs/images/choose-redis.png)
+
+> ![Choose create Redis](docs/images/choose-create-redis.png)
+
+> ![Redis settings](docs/images/redis-settings.png)
+
+> ![Redis node](docs/images/redis-node-type.png)
+
+and we should go for **0** replicas.
+
+> ![Redis advanced settings](docs/images/redis-advanced-settings.png)
+
+## Custom Security Group (to wire all instances together)
+
+Back on the VPC dashboard:
+
+> ![Select security groups](docs/images/select-security-groups.png)
+
+> ![Choose create security group](docs/images/choose-create-security-group.png)
+
+> ![Create security group](docs/images/create-security-group.png)
+
+> ![New security group](docs/images/new-security-group.png)
+
+> ![Security group rule](docs/images/security-group-rule.png)
+
+Now we have to assigned this configured security group to our 3 services.
+
+## Apply Security Group to Resources
+
+Add the new security group onto Redis:
+
+> ![Modifying Redis](docs/images/modifying-redis.png)
+
+> ![Redis modify](docs/images/modify-redis.png)
+
+Next add the new security group to RDS:
+
+> ![Modifying Postgres](docs/images/modifying-postgres.png)
+
+> ![Modified Postgres](docs/images/modified-postgres.png)
+
+and now for Elastic Beanstalk:
+
+> ![Modifying EB](docs/images/modifying-eb.png)
+
+> ![Mofified EB](docs/images/modified-eb.png)
+
+## Environment Variables
+
+Choosing our Elastic Beanstalk instance, then:
+
+> ![Creating environment variables](docs/images/creating-environment-variables.png)
+
+To add the **Redis host** environment variable, we have to look up:
+
+> ![Check Elasticache](docs/images/check-elasticache.png)
+
+> ![Redis host](docs/images/redis-host.png)
+
+To add the **Postgres host** environment variable, we have to look up:
+
+> ![RDS host lookup](docs/images/rds-host-lookup.png)
+
+> ![RDS host lookup](docs/images/rds-host-lookup-2.png)
+
+> ![RDS host](docs/images/rds-host.png)
+
+> ![Environment variables](docs/images/environment-variables.png)
+
+## IAM Keys for Deployment
+
+Now Elastic Beanstalk only really needs the [Dockerrun.aws.json](Dockerrun.aws.json) file which it reads and pulls in all images declared in said file.
+
+Let's create a new **user** with deployment access:
+
+> ![Start user creation](docs/images/start-user-creation.png)
+
+> ![Adding user](docs/images/adding-user.png)
+
+> ![Add user](docs/images/add-user.png)
+
+> ![Attaching policy](docs/images/attaching-policy.png)
+
+> ![Beanstalk policy](docs/images/beanstalk-policy.png)
+
+We'll copy the generate keys to Travis.
+
+> ![Travis](docs/images/travis.png)
+
+> ![Travis environment variables](docs/images/travis-environment-variables.png)
+
+## Travis Deploy
+
+Finally we can add **deploy** to [.travis.yml](.travis.yml). Note, we'll need to look up the **bucket name**:
+
+> ![Bucket](docs/images/s3-bucket.png)
+
